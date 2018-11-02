@@ -136,7 +136,23 @@ open class MenuItemView: UIView {
             widthConstraint.constant = calculateLabelSize(titleLabel, maxWidth: size.width).width
             descriptionWidthConstraint.constant = calculateLabelSize(descriptionLabel, maxWidth: size.width).width
         case .image, .custom:
-            widthConstraint.constant = size.width / CGFloat(menuOptions.itemsOptions.count)
+            var sizeWidth = size.width
+
+            if (size.width > size.height) {
+                //landscape
+                if #available(iOS 11.0, *), let insets = UIApplication.shared.keyWindow?.safeAreaInsets {
+                    //safearea
+                    if insets.top > 0, insets.bottom > 0 {
+                        sizeWidth -= insets.top
+                        sizeWidth -= insets.bottom
+                    } else if insets.left > 0, insets.right > 0 {
+                        sizeWidth -= insets.left
+                        sizeWidth -= insets.right
+                    }
+                }
+            }
+
+            widthConstraint.constant = sizeWidth / CGFloat(menuOptions.itemsOptions.count)
         }
     }
     
@@ -229,8 +245,13 @@ open class MenuItemView: UIView {
         let width: CGFloat
         switch menuOptions.displayMode {
         case .segmentedControl:
+
             if let windowWidth = UIApplication.shared.keyWindow?.bounds.size.width {
-                width = windowWidth / CGFloat(menuOptions.itemsOptions.count)
+                if #available(iOS 11.0, *), let insets = UIApplication.shared.keyWindow?.safeAreaInsets {
+                    width = (windowWidth - insets.left - insets.right) / CGFloat(menuOptions.itemsOptions.count)
+                } else {
+                    width = windowWidth / CGFloat(menuOptions.itemsOptions.count)
+                }
             } else {
                 width = UIScreen.main.bounds.width / CGFloat(menuOptions.itemsOptions.count)
             }
