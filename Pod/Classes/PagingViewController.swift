@@ -81,12 +81,24 @@ open class PagingViewController: UIViewController {
     }
     
     fileprivate func layoutContentScrollView() {
-        NSLayoutConstraint.activate([
-            contentScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            contentScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            contentScrollView.topAnchor.constraint(equalTo: view.topAnchor),
-            contentScrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            ])
+        if #available(iOS 11.0, *), let _ = UIApplication.shared.keyWindow?.safeAreaInsets {
+            //Corresponding to SafeArea
+            let guide = view.safeAreaLayoutGuide
+            
+            NSLayoutConstraint.activate([
+                contentScrollView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
+                contentScrollView.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
+                contentScrollView.topAnchor.constraint(equalToSystemSpacingBelow: guide.topAnchor, multiplier: 1.0),
+                guide.bottomAnchor.constraint(equalToSystemSpacingBelow: contentScrollView.bottomAnchor, multiplier: 1.0)
+                ])
+        } else {
+            NSLayoutConstraint.activate([
+                contentScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                contentScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                contentScrollView.topAnchor.constraint(equalTo: view.topAnchor),
+                contentScrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                ])
+        }
     }
     
     fileprivate func constructPagingViewControllers() {

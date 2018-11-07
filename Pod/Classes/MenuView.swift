@@ -197,13 +197,27 @@ open class MenuView: UIScrollView {
     fileprivate func layoutContentView() {
         // H:|[contentView]|
         // V:|[contentView(==scrollView)]|
-        NSLayoutConstraint.activate([
-            contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            contentView.topAnchor.constraint(equalTo: topAnchor),
-            contentView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            contentView.heightAnchor.constraint(equalTo: heightAnchor)
-            ])
+        if #available(iOS 11.0, *), let _ = UIApplication.shared.keyWindow?.safeAreaInsets {
+            //Corresponding to SafeArea
+            let guide = self.safeAreaLayoutGuide
+            NSLayoutConstraint.activate([
+                contentView.leadingAnchor.constraint(equalToSystemSpacingAfter: guide.leadingAnchor, multiplier: 1.0 ),
+//                contentView.trailingAnchor.constraint(equalToSystemSpacingAfter: guide.trailingAnchor, multiplier: 1.0 ),
+//                contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
+                contentView.bottomAnchor.constraint(equalTo: bottomAnchor),
+                contentView.topAnchor.constraint(equalTo: topAnchor),
+                contentView.heightAnchor.constraint(equalTo: heightAnchor)
+                ])
+        } else {
+            NSLayoutConstraint.activate([
+                contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
+                contentView.topAnchor.constraint(equalTo: topAnchor),
+                contentView.bottomAnchor.constraint(equalTo: bottomAnchor),
+                contentView.heightAnchor.constraint(equalTo: heightAnchor)
+                ])
+        }
     }
 
     fileprivate func constructMenuItemViews(_ menuOptions: MenuViewCustomizable) {
